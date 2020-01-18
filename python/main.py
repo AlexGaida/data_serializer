@@ -42,7 +42,7 @@ def run_serializer(serializer_type=""):
     return serializer_module.SerializeFile()
 
 
-def display_serializer(serializer_class=None):
+def display_serializer(serializer_class=None, serializer_display=0):
     """
     display the serializer class
     :param serializer_class:
@@ -83,34 +83,17 @@ def get_serializer_pretty_names():
     return ret_str
 
 
-if __name__ in "__main__":
+def run_program(serializer_type="", serializer_alt_type="", serializer_query=0,
+                serializer_display=0, serializer_test=0):
     """
-    Default serializer: JSON.
+    Runs the program.
+    :param serializer_type: <str> Supported serializers.
+    :param serializer_alt_type: <str> Alternative serializers.
+    :param serializer_query: <int> 0, 1 Print serializers.
+    :param serializer_display: <int> [0: Print, 1: Web Browser, 2: Notepad], Show serializer output.
+    :param serializer_test: <int> 0, 1 Run Serializer unit tests.
+    :return: <False> for failure.
     """
-    parser = argparse.ArgumentParser(description="Let's serialize this data file.")
-    parser.add_argument(
-        "--type", default="", type=str, choices=SERIALIZERS,
-        help="This is the serializer data type parameter.")
-    parser.add_argument(
-        "--display", default=0, choices=[1, 2, 3], type=int,
-        help="When true, display the output serialized file.")
-    parser.add_argument(
-        "--query", default=0, choices=[0, 1], type=int,
-        help="When true, display all supported serializers.")
-    parser.add_argument(
-        "--alt", default="", type=str, choices=ALT_SERIALIZERS,
-        help="When this is supplied, alternative serializers are used instead.")
-    parser.add_argument(
-        "--tests", default=0, type=int, choices=[0, 1],
-        help="Run unittest on all available serializers. This procedure will be timed.")
-
-    args = parser.parse_args()
-    serializer_type = args.type
-    serializer_query = args.query
-    serializer_alt_type = args.alt
-    serializer_display = args.display
-    serializer_test = args.tests
-
     if serializer_query:
         print("Running serializer query: ")
         print(get_serializer_pretty_names())
@@ -119,10 +102,13 @@ if __name__ in "__main__":
         if serializer_alt_type:
             print("Displaying chosen serializer: " + serializer_alt_type)
             cls = run_serializer(serializer_type=serializer_alt_type)
-        else:
+        elif serializer_type:
             print("Displaying chosen serializer: " + serializer_type)
             cls = run_serializer(serializer_type=serializer_type)
-        display_serializer(serializer_class=cls)
+        else:
+            print("Please choose a serializer.")
+            return False
+        display_serializer(serializer_class=cls, serializer_display=serializer_display)
 
     elif serializer_test:
         print("Running serializer tests: ")
@@ -140,5 +126,115 @@ if __name__ in "__main__":
         cls = run_serializer(serializer_type=serializer_alt_type)
         cls.write()
 
+
+def run_program_loop():
+    """
+    Runs the program on a loop.
+    :return: None
+    """
+    parser = argparse.ArgumentParser(prog='Data Serializer', description='Serializing personal data.')
+    parser.add_argument('cmd', choices=['type', 'display', 'query', 'alt', 'tests', 'quit', 'exit'])
+    while True:
+        user_input = ""
+        print("Please provide arguments: type, display, query, alt, tests, quit, exit")
+        input_str = raw_input("Cmd: ")
+        try:
+            arguments = parser.parse_args(input_str.split())
+        except SystemExit:
+            continue
+
+        if arguments.cmd == 'type':
+            user_input = raw_input("Provide serializer type: ")
+            if user_input in SERIALIZERS:
+                run_program(serializer_type=user_input)
+            else:
+                print("[Invalid Name] :: Acceptable serializers:\n{}".format(SERIALIZERS))
+
+        if arguments.cmd == 'alt':
+            user_input = raw_input("Provide alternative serializer type: ")
+            if user_input in ALT_SERIALIZERS:
+                run_program(serializer_alt_type=user_input)
+            else:
+                print("[Invalid Name] :: Acceptable alternative serializers:\n{}".format(ALT_SERIALIZERS))
+
+        if arguments.cmd == 'display':
+            kargs = {}
+            user_input = raw_input("Provide integers: [1: Print data, 2: Open browser, 3: Open notepad]")
+            user_input = int(user_input)
+            if user_input in (1, 2, 3):
+                kargs["serializer_display"] = user_input
+            else:
+                print("[Invalid Display Input] :: Use numbers 1, 2, 3.\n"
+                      "[1: Print data, 2: Open browser, 3: Open notepad]")
+                return False
+
+            user_input = raw_input("Supported or Alternative serializers? [1, 2]: ")
+            user_input = int(user_input)
+            if user_input == 1:
+                print("Supported Serializers: {}".format(SERIALIZERS))
+                serializer_input = raw_input("Provide a serializer name: ")
+                if serializer_input in SERIALIZERS:
+                    kargs["serializer_type"] = serializer_input
+            else:
+                print("Alternative Serializers: {}".format(ALT_SERIALIZERS))
+                serializer_input = raw_input("Provide a alternate serializer name: ")
+                if serializer_input in ALT_SERIALIZERS:
+                    kargs["serializer_alt_type"] = serializer_input
+
+            # run the program
+            run_program(**kargs)
+
+        if arguments.cmd == 'query':
+            run_program(serializer_query=1)
+
+        if arguments.cmd == 'tests':
+            run_program(serializer_test=1)
+
+        # get the users' input
+        if arguments.cmd in ('quit', 'exit'):
+            print("[Escape] :: Exiting program.")
+            break
+
+
+if __name__ in "__main__":
+    """
+    Run the command-line program.
+    """
+    parser = argparse.ArgumentParser(description="Let's serialize a data file.")
+    parser.add_argument(
+        "--run", default=0, type=int, choices=[0, 1],
+        help="Run the program on a loop.")
+    parser.add_argument(
+        "--type", default="", type=str, choices=SERIALIZERS,
+        help="This is the serializer data type parameter.")
+    parser.add_argument(
+        "--display", default=0, choices=[1, 2, 3], type=int,
+        help="When true, display the output serialized file.")
+    parser.add_argument(
+        "--query", default=0, choices=[0, 1], type=int,
+        help="When true, display all supported serializers.")
+    parser.add_argument(
+        "--alt", default="", type=str, choices=ALT_SERIALIZERS,
+        help="When this is supplied, alternative serializers are used instead.")
+    parser.add_argument(
+        "--tests", default=0, type=int, choices=[0, 1],
+        help="Run unittest on all available serializers. This procedure will be timed.")
+
+    args = parser.parse_args()
+    serializer_run = args.run
+    serializer_type = args.type
+    serializer_query = args.query
+    serializer_alt_type = args.alt
+    serializer_display = args.display
+    serializer_test = args.tests
+
+    if serializer_run:
+        run_program_loop()
+
     else:
-        print("Exiting main.")
+        run_program(serializer_type=serializer_type,
+                    serializer_query=serializer_query,
+                    serializer_alt_type=serializer_alt_type,
+                    serializer_display=serializer_display,
+                    serializer_test=serializer_test)
+

@@ -1,5 +1,5 @@
 """
-This is a json reader/ writer module.
+This is a yaml reader/ writer module.
 """
 # import standard modules
 import yaml
