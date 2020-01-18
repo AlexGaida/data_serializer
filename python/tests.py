@@ -38,6 +38,9 @@ def init_modules():
 
 
 class TestSerializers(unittest.TestCase):
+    def test_unicode_write(self):
+        self.assertEqual(SERIALS_DICT['unicode'].write(), True)
+
     def test_json_write(self):
         self.assertEqual(SERIALS_DICT['json'].write(), True)
 
@@ -60,7 +63,30 @@ class TestSerializers(unittest.TestCase):
         self.assertEqual(SERIALS_DICT['alt_pickle'].write(), True)
 
     def test_alt_pickle_read(self):
+        self.assertEqual(SERIALS_DICT['alt_pickle'].read(), True)
+
+    def test_alt_yaml_01_read(self):
         self.assertEqual(SERIALS_DICT['alt_01_yaml'].read(), True)
+
+    def test_alt_01_yaml_read(self):
+        self.assertEqual(SERIALS_DICT['alt_01_yaml'].read(), True)
+
+    def test_alt_yaml_read(self):
+        self.assertEqual(SERIALS_DICT['alt_yaml'].read(), True)
+
+
+class TestHTMLWrite(unittest.TestCase):
+    def test_unicode_HTML(self):
+        self.assertEqual(SERIALS_DICT['json'].display(dsp_type=2), True)
+
+    def test_json_HTML(self):
+        self.assertEqual(SERIALS_DICT['json'].display(dsp_type=2), True)
+
+    def test_yaml_HTML(self):
+        self.assertEqual(SERIALS_DICT['yaml'].display(dsp_type=2), True)
+
+    def test_pickle_HTML(self):
+        self.assertEqual(SERIALS_DICT['pickle'].display(dsp_type=2), True)
 
 
 def perform_tests():

@@ -8,13 +8,14 @@ import cPickle as pickle
 from serializers.serialize_template import Serializer
 
 # define class variables
-Serializer.SERIALIZER_TYPE = "pickle"
+Serializer.SERIALIZER_TYPE = "alt_pickle"
 
 
 class SerializeFile(Serializer):
     def __init__(self):
         # get the input data
         Serializer.__init__(self)
+        self.DATA_TYPE = "dictionary"
 
     def read(self, f_name=""):
         """
@@ -26,7 +27,7 @@ class SerializeFile(Serializer):
 
         with open(self.OUTPUT_PATH, 'rb') as pickle_data:
             try:
-                rdata = pickle.loads(pickle_data)
+                rdata = pickle.load(pickle_data)
                 pickle_data.close()
                 self.READ_DATA = rdata
                 return True

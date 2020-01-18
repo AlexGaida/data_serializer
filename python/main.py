@@ -9,7 +9,7 @@ import webbrowser
 import unittest
 import os
 import subprocess
-
+from sys import platform
 
 # define custom imports
 import paths
@@ -27,34 +27,47 @@ def run_serializer(serializer_type=""):
     """
     runs the chosen serializer.
     :param serializer_type: <str> serializer type.
-    :return: <True> for success.
+    :return: <Class> SerializeFile.
     """
     serializer_name = "serialize_" + serializer_type
     print("[Serializer_Name] :: {}".format(serializer_name))
-    fp, pathname, description = imp.find_module(serializer_name, [paths.SERIALIZER_PATH])
+    if "_alt_" in serializer_name:
+        path_name = paths.ALTERNATIVE_SERIALIZER_PATH
+    else:
+        path_name = paths.SERIALIZER_PATH
+    fp, pathname, description = imp.find_module(serializer_name, [path_name])
     serializer_module = imp.load_module(serializer_name, fp, pathname, description)
 
     # instantiate the chosen serializer file class
-    srl_cls = serializer_module.SerializeFile()
+    return serializer_module.SerializeFile()
 
+
+def display_serializer(serializer_class=None):
+    """
+    display the serializer class
+    :param serializer_class:
+    :return: <True> for success.
+    """
     if serializer_display == 1:
         # display on the command line
-        srl_cls.display(dsp_type=1)
+        serializer_class.display(dsp_type=1)
 
     elif serializer_display == 2:
         # open a web browser to display the serialized document
-        srl_cls.display(dsp_type=2)
-        webbrowser.open_new_tab(srl_cls.OUTPUT_HTML_PATH)
+        serializer_class.display(dsp_type=2)
+        # webbrowser.open_new_tab(srl_cls.OUTPUT_PATH)
+        webbrowser.open_new_tab(serializer_class.OUTPUT_HTML_PATH)
 
     elif serializer_display == 3:
         # display the serialized document on a notepad
-        srl_cls.display(dsp_type=2)
+        serializer_class.display(dsp_type=2)
         # webbrowser.open(srl_cls.OUTPUT_HTML_PATH)
-        subprocess.Popen(['notepad.exe', srl_cls.OUTPUT_PATH])
-
-
+        if platform == "win32":
+            subprocess.Popen(['notepad.exe', serializer_class.OUTPUT_PATH])
+        elif platform in ("linux", "linux2"):
+            subprocess.Popen(['gedit', serializer_class.OUTPUT_PATH])
     else:
-        srl_cls.write()
+        serializer_class.write()
     return True
 
 
@@ -102,6 +115,15 @@ if __name__ in "__main__":
         print("Running serializer query: ")
         print(get_serializer_pretty_names())
 
+    elif serializer_display:
+        if serializer_alt_type:
+            print("Displaying chosen serializer: " + serializer_alt_type)
+            cls = run_serializer(serializer_type=serializer_alt_type)
+        else:
+            print("Displaying chosen serializer: " + serializer_type)
+            cls = run_serializer(serializer_type=serializer_type)
+        display_serializer(serializer_class=cls)
+
     elif serializer_test:
         print("Running serializer tests: ")
         tests.init_modules()
@@ -110,11 +132,13 @@ if __name__ in "__main__":
 
     elif serializer_type:
         print("Running chosen serializer: " + serializer_type)
-        run_serializer(serializer_type=serializer_type)
+        cls = run_serializer(serializer_type=serializer_type)
+        cls.write()
 
     elif serializer_alt_type:
         print("Running chosen alternative serializer: " + serializer_alt_type)
-        run_serializer(serializer_type=serializer_alt_type)
+        cls = run_serializer(serializer_type=serializer_alt_type)
+        cls.write()
 
     else:
         print("Exiting main.")

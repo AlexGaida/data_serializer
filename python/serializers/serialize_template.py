@@ -23,9 +23,11 @@ class Serializer:
     INTERPRETED_INPUT_DATA = None
     READ_DATA = None
 
-    def __init__(self):
+    def __init__(self, serial_type=""):
         if not self.SERIALIZER_TYPE:
             raise ValueError("[Parameter SERIALIZER_TYPE is empty.]")
+        if serial_type:
+            self.SERIALIZER_TYPE = serial_type
         self.OUTPUT_PATH = paths.join([OUTPUT_FILE_PATH, OUTPUT_FILE_STR + '.' + self.SERIALIZER_TYPE])
         self.OUTPUT_HTML_PATH = paths.join([OUTPUT_FILE_PATH, OUTPUT_FILE_STR + '_' + self.SERIALIZER_TYPE + '.html'])
 
@@ -98,7 +100,7 @@ class Serializer:
         dict_data = {}
         ls_data = []
 
-        # collect data into a dictionary variable
+        # collect data into a dictionary memory variable
         with open(INPUT_DATA_FILE, 'rU') as f_csv:
             csv_data = csv.reader(f_csv, delimiter=' ', quotechar='|')
             for idx, row in enumerate(csv_data):
@@ -119,7 +121,8 @@ class Serializer:
                     if ls:
                         person = [name]
                         for k, v in zip(keys, data):
-                            person.append(v)
+                            if k in self.GET_DATA:
+                                person.append(v)
                         ls_data.append(tuple(person))
         if dict_data:
             print("[Data] :: Dictionary.", len(dict_data))
@@ -169,17 +172,35 @@ class Serializer:
 
     def write_html(self):
         """
-        Writes the serialized file on the html document for display.
+        Writes the html document for nice viewing.
         :return: <bool> True for success. <bool> False for failure.
         """
-        message = """<html>
-        <head></head>
-        <body><p>{data}</p></body>
-        </html>""".format(data=self.READ_DATA)
+        lines = self.deserialize_data(self.READ_DATA)
+        message = "<html>\n"
+        message += "<head>{} Data</head>".format(self.SERIALIZER_TYPE)
+        message += "<body>"
+
+        if isinstance(lines, (str, unicode)):
+            message += "<p>{}</p>".format(lines)
+
+        if isinstance(lines, (list, tuple)):
+            for info in lines:
+                # message += "<p>Name: {}, Phone: {}, Address: {}</p>".format(*info)
+                message += "<p>{}</p>".format(info)
+
+        if isinstance(lines, dict):
+            for name, info in lines.items():
+                message += "<p>{}: ".format(name)
+                values = ""
+                for k, v in info.items():
+                    values += "{}: {}, ".format(k, v)
+                message += "{}</p>".format(values)
+        message += "</html>"
 
         with open(self.OUTPUT_HTML_PATH, 'wb') as html_write:
             html_write.write(message)
             html_write.close()
+        return True
 
     def write(self, f_output="", f_data=""):
         """

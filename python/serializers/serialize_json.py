@@ -9,13 +9,13 @@ from serializers.serialize_template import Serializer
 
 # define class variables
 Serializer.SERIALIZER_TYPE = "json"
-Serializer.DATA_TYPE = "list"
 
 
 class SerializeFile(Serializer):
     def __init__(self):
         # get the input data
         Serializer.__init__(self)
+        self.DATA_TYPE = "dictionary"
 
     def read(self, f_name=""):
         """

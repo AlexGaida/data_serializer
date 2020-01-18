@@ -7,7 +7,8 @@ import yaml
 # import custom modules
 from serializers.serialize_template import Serializer
 
-Serializer.SERIALIZER_TYPE = "alt_yaml"
+# define class variables
+Serializer.SERIALIZER_TYPE = "01_yaml"
 
 
 class SerializeFile(Serializer):
@@ -18,7 +19,7 @@ class SerializeFile(Serializer):
 
     def read(self, f_name=""):
         """
-        read the json file.
+        read the yaml file.
         :param f_name: <str> file input name.
         :return: <bool> True for success. <bool> False for failure.
         """
@@ -41,11 +42,11 @@ class SerializeFile(Serializer):
         """
         Serializer.write(self, f_output=f_output, f_data=f_data)
 
-        print("[Serializer Type] :: {}".format(self.SERIALIZER_TYPE))
-        print("[Serializer Output] :: {}".format(self.OUTPUT_PATH))
-        print("[Serializer Html Output] :: {}".format(self.OUTPUT_HTML_PATH))
-
-        with open(self.OUTPUT_PATH, 'w') as yaml_data:
-            yaml.dump(self.INTERPRETED_INPUT_DATA, yaml_data)
-            yaml_data.close()
-        return True
+        with open(self.OUTPUT_PATH, 'wb') as yaml_data:
+            try:
+                yaml.dump(self.INTERPRETED_INPUT_DATA, yaml_data)
+                yaml_data.close()
+                Serializer.write_html(self)
+                return True
+            except ValueError:
+                return False

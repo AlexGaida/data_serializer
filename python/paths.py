@@ -43,13 +43,16 @@ def find_serializers(files=False, names=False, alternative=False):
         serials = filter(
             lambda x: '.pyc' not in x and '.py' in x and '__init__' not in x, os.listdir(SERIALIZER_PATH)
         )
+
     if not serials:
         return False
 
+    # filters the the unecessary files from list
     if files:
         return filter(lambda x: x not in IGNORE_FILES, serials)
+
+    # strips the files of the ".py" and "serialize_" strings from the file names
     if names:
-        # strips the files of the ".py" and "serialize_" strings from the file names
         ret_names = []
         for serial in serials:
             if serial in IGNORE_FILES:

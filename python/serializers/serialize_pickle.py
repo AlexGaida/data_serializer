@@ -3,20 +3,19 @@ This is a json reader/ writer module.
 """
 # import standard modules
 import pickle
-import pprint
 
 # import custom modules
 from serializers.serialize_template import Serializer
 
 # define class variables
 Serializer.SERIALIZER_TYPE = "pickle"
-Serializer.DATA_TYPE = "dictionary"
 
 
 class SerializeFile(Serializer):
     def __init__(self):
         # get the input data
         Serializer.__init__(self)
+        self.DATA_TYPE = "dictionary"
 
     def read(self, f_name=""):
         """
