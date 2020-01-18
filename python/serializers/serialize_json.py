@@ -9,6 +9,7 @@ from serializers.serialize_template import Serializer
 
 # define class variables
 Serializer.SERIALIZER_TYPE = "json"
+Serializer.DATA_TYPE = "list"
 
 
 class SerializeFile(Serializer):
@@ -22,7 +23,9 @@ class SerializeFile(Serializer):
         :param f_name: <str> file input name.
         :return: <bool> True for success. <bool> False for failure.
         """
-        Serializer.read(self, f_name=f_name)
+        success = Serializer.read(self, f_name=f_name)
+        if not success:
+            raise IOError("[No File] :: There is no file to read from.")
 
         with open(self.OUTPUT_PATH, 'rb') as json_data:
             try:
@@ -48,4 +51,3 @@ class SerializeFile(Serializer):
                 return True
             except ValueError:
                 return False
-

@@ -8,6 +8,8 @@ import imp
 import webbrowser
 import unittest
 import os
+import subprocess
+
 
 # define custom imports
 import paths
@@ -19,6 +21,41 @@ SERIALIZERS = paths.find_serializers(names=1)
 ALT_SERIALIZERS = paths.find_serializers(alternative=1, names=1)
 OUTPUT_PATH = paths.OUTPUT_PATH
 INPUT_DATA_FILE = paths.INPUT_DATA_FILE
+
+
+def run_serializer(serializer_type=""):
+    """
+    runs the chosen serializer.
+    :param serializer_type: <str> serializer type.
+    :return: <True> for success.
+    """
+    serializer_name = "serialize_" + serializer_type
+    print("[Serializer_Name] :: {}".format(serializer_name))
+    fp, pathname, description = imp.find_module(serializer_name, [paths.SERIALIZER_PATH])
+    serializer_module = imp.load_module(serializer_name, fp, pathname, description)
+
+    # instantiate the chosen serializer file class
+    srl_cls = serializer_module.SerializeFile()
+
+    if serializer_display == 1:
+        # display on the command line
+        srl_cls.display(dsp_type=1)
+
+    elif serializer_display == 2:
+        # open a web browser to display the serialized document
+        srl_cls.display(dsp_type=2)
+        webbrowser.open_new_tab(srl_cls.OUTPUT_HTML_PATH)
+
+    elif serializer_display == 3:
+        # display the serialized document on a notepad
+        srl_cls.display(dsp_type=2)
+        # webbrowser.open(srl_cls.OUTPUT_HTML_PATH)
+        subprocess.Popen(['notepad.exe', srl_cls.OUTPUT_PATH])
+
+
+    else:
+        srl_cls.write()
+    return True
 
 
 def get_serializer_pretty_names():
@@ -39,16 +76,16 @@ if __name__ in "__main__":
     """
     parser = argparse.ArgumentParser(description="Let's serialize this data file.")
     parser.add_argument(
-        "--type", default="json", type=str, choices=SERIALIZERS,
+        "--type", default="", type=str, choices=SERIALIZERS,
         help="This is the serializer data type parameter.")
     parser.add_argument(
-        "--display", default=0, choices=[1, 2], type=int,
+        "--display", default=0, choices=[1, 2, 3], type=int,
         help="When true, display the output serialized file.")
     parser.add_argument(
         "--query", default=0, choices=[0, 1], type=int,
         help="When true, display all supported serializers.")
     parser.add_argument(
-        "--alt", default=0, type=str, choices=ALT_SERIALIZERS,
+        "--alt", default="", type=str, choices=ALT_SERIALIZERS,
         help="When this is supplied, alternative serializers are used instead.")
     parser.add_argument(
         "--tests", default=0, type=int, choices=[0, 1],
@@ -62,33 +99,22 @@ if __name__ in "__main__":
     serializer_test = args.tests
 
     if serializer_query:
+        print("Running serializer query: ")
         print(get_serializer_pretty_names())
 
     elif serializer_test:
         print("Running serializer tests: ")
+        tests.init_modules()
         suite = unittest.TestLoader().discover(os.path.dirname(tests.__file__), pattern="tests.py")
         unittest.TextTestRunner(verbosity=2).run(suite)
 
     elif serializer_type:
         print("Running chosen serializer: " + serializer_type)
-        serializer_name = "serialize_" + serializer_type
-        fp, pathname, description = imp.find_module(serializer_name, [paths.SERIALIZER_PATH])
-        serializer_module = imp.load_module(serializer_name, fp, pathname, description)
-
-        # instantiate the chosen serializer file class
-        srl_cls = serializer_module.SerializeFile()
-
-        if serializer_display == 1:
-            # display on the command line
-            srl_cls.display()
-        elif serializer_display == 2:
-            # open a web browser to display the serialized document
-            webbrowser.open_new_tab(srl_cls.OUTPUT_HTML_PATH)
-        else:
-            srl_cls.write()
+        run_serializer(serializer_type=serializer_type)
 
     elif serializer_alt_type:
         print("Running chosen alternative serializer: " + serializer_alt_type)
+        run_serializer(serializer_type=serializer_alt_type)
 
     else:
         print("Exiting main.")

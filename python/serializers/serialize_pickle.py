@@ -3,12 +3,14 @@ This is a json reader/ writer module.
 """
 # import standard modules
 import pickle
+import pprint
 
 # import custom modules
 from serializers.serialize_template import Serializer
 
 # define class variables
 Serializer.SERIALIZER_TYPE = "pickle"
+Serializer.DATA_TYPE = "dictionary"
 
 
 class SerializeFile(Serializer):
@@ -22,7 +24,9 @@ class SerializeFile(Serializer):
         :param f_name: <str> file input name.
         :return: <bool> True for success. <bool> False for failure.
         """
-        Serializer.read(self, f_name=f_name)
+        success = Serializer.read(self, f_name=f_name)
+        if not success:
+            raise IOError("[No File] :: There is no file to read from.")
 
         with open(self.OUTPUT_PATH, 'rb') as pickle_data:
             try:

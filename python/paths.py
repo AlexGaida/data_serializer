@@ -5,11 +5,12 @@ Check if file names and directories are valid.
 
 # import standard modules
 import os
+import re
 import os.path as path
 
 # define global variables
 IGNORE_FILES = ["serialize_template.py", "__init__.py"]
-
+SERIALIZER_NAMES = ["serialize"]
 MODULE_PATH = __file__
 MODULE_DIR = os.path.dirname(__file__)
 OUTPUT_PATH = path.join(MODULE_DIR, os.pardir, "output")
@@ -33,16 +34,33 @@ def find_serializers(files=False, names=False, alternative=False):
     finds serializers.
     :return: <list> supported serializer list. <bool> False for failure.
     """
+    # return only the nice file names
     if alternative:
-        serials = filter(lambda x: '.pyc' not in x, os.listdir(ALTERNATIVE_SERIALIZER_PATH))
+        serials = filter(
+            lambda x: '.pyc' not in x and '.py' in x and '__init__' not in x, os.listdir(ALTERNATIVE_SERIALIZER_PATH)
+        )
     else:
-        serials = filter(lambda x: '.pyc' not in x, os.listdir(SERIALIZER_PATH))
+        serials = filter(
+            lambda x: '.pyc' not in x and '.py' in x and '__init__' not in x, os.listdir(SERIALIZER_PATH)
+        )
     if not serials:
         return False
+
     if files:
         return filter(lambda x: x not in IGNORE_FILES, serials)
     if names:
-        return [x.split('.')[0].split('_')[-1] for x in serials if x not in IGNORE_FILES]
+        # strips the files of the ".py" and "serialize_" strings from the file names
+        ret_names = []
+        for serial in serials:
+            if serial in IGNORE_FILES:
+                continue
+            serial = serial.strip('.py')
+            for accepted_name in SERIALIZER_NAMES:
+                if accepted_name in serial:
+                    nice_name = re.sub(accepted_name+'_', '', serial)
+            ret_names.append(nice_name)
+        return ret_names
+    return False
 
 
 def join(args):
