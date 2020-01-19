@@ -87,7 +87,7 @@ The alternative serializer folder:
 
 
 ### serializer template
-To create a new serializer module, all other serializer modules are sourcing from this base class serializer folder:
+To create a new serializer module, all other serializer modules are sourcing from this base class serializer python file:
 ```
 ..\data_serializer\python\serializers\serialize_template.py
 ```
