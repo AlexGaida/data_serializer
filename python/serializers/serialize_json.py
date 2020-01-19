@@ -7,6 +7,9 @@ import json
 # import custom modules
 from serializers.serialize_template import Serializer
 
+# define private variables
+__version__ = "1.0.0"
+
 # define class variables
 Serializer.SERIALIZER_TYPE = "json"
 

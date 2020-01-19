@@ -7,7 +7,14 @@ import yaml
 # import custom modules
 from serializers.serialize_template import Serializer
 
+# define private variables
+__version__ = "1.0.0"
+
+# define class variables
 Serializer.SERIALIZER_TYPE = "alt_yaml"
+
+# define global variables
+DEBUG = 0
 
 
 class SerializeFile(Serializer):
@@ -41,9 +48,10 @@ class SerializeFile(Serializer):
         """
         Serializer.write(self, f_output=f_output, f_data=f_data)
 
-        print("[Serializer Type] :: {}".format(self.SERIALIZER_TYPE))
-        print("[Serializer Output] :: {}".format(self.OUTPUT_PATH))
-        print("[Serializer Html Output] :: {}".format(self.OUTPUT_HTML_PATH))
+        if DEBUG:
+            print("[Serializer Type] :: {}".format(self.SERIALIZER_TYPE))
+            print("[Serializer Output] :: {}".format(self.OUTPUT_PATH))
+            print("[Serializer Html Output] :: {}".format(self.OUTPUT_HTML_PATH))
 
         with open(self.OUTPUT_PATH, 'w') as yaml_data:
             yaml.dump(self.INTERPRETED_INPUT_DATA, yaml_data)

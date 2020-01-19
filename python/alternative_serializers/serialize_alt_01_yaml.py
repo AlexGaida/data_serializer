@@ -7,6 +7,9 @@ import yaml
 # import custom modules
 from serializers.serialize_template import Serializer
 
+# define private variables
+__version__ = "1.0.0"
+
 # define class variables
 Serializer.SERIALIZER_TYPE = "01_yaml"
 
@@ -27,7 +30,7 @@ class SerializeFile(Serializer):
         if not success:
             raise IOError("[No File] :: There is no file to read from.")
 
-        with open(self.OUTPUT_PATH, 'rb') as yaml_data:
+        with open(self.OUTPUT_PATH, 'r') as yaml_data:
             rdata = yaml.load(yaml_data)
             self.READ_DATA = rdata
             yaml_data.close()

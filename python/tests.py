@@ -9,6 +9,9 @@ import imp
 # import custom modules
 import paths
 
+# define private variables
+__version__ = "1.0.0"
+
 # define global variables
 SERIALIZERS = paths.find_serializers(names=1)
 ALT_SERIALIZERS = paths.find_serializers(alternative=1, names=1)

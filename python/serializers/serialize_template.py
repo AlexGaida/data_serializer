@@ -10,6 +10,9 @@ import ast
 # import custom modules
 import paths
 
+# define private variables
+__version__ = "1.0.0"
+
 # define global variables
 INPUT_DATA_FILE = paths.INPUT_DATA_FILE
 OUTPUT_FILE_STR = paths.OUTPUT_FILE_STR

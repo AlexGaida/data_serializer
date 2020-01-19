@@ -8,6 +8,9 @@ import os
 import re
 import os.path as path
 
+# define private variables
+__version__ = "1.0.0"
+
 # define global variables
 IGNORE_FILES = ["serialize_template.py", "__init__.py"]
 SERIALIZER_NAMES = ["serialize"]
