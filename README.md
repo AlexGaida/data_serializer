@@ -14,7 +14,7 @@ The developer must have these support options in the tool:
 
 ### Prerequisites
 
-Open a windows or linux command prompt, and drag this file through:
+Open a windows or linux command prompt, and drag this file through and run the commands:
 
 ```
 ...\data_serializer\python\main.py
@@ -28,7 +28,7 @@ There are two ways to operate this tool, the first option is by using the 6 argu
   --run	{0, 1}	   Run the program inside a loop.
   --type {json,pickle,yaml}
                         This is the serializer data type parameter.
-  --display {1,2,3}     When true, display the output serialized file. 1: print on command-line. 2: open webbrower.
+  --display {1,2,3}     When true, display the output serialized file. 1: print on command-line. 2: open webbrower. 3: open notepad.
   --query {0,1}         When true, display all supported serializers.
   --alt {alt_01_yaml,alt_pickle,alt_yaml,alt_yaml_01}
                         When this is supplied, alternative serializers are
@@ -43,7 +43,20 @@ type, display, query, alt, tests, quit, exit
 ..data_serializer\python\main.py --run 1
 ```
 
-### display data
+### serializing data
+To deseralize the personal_data.csv file and to serealize it, only one argument is needed at a time: type and alt.
+
+To serialize using pickle.
+```
+main.py --type pickle
+```
+
+To serialize using alternative pickle.
+```
+main.py --type alt_pickle
+```
+
+### displaying data
 To display the serialized data, two arguments must be supplied: type (str) and display (int). The tools has three options of displaying data:
 1. printing the data on the command line.
 2. opening a web browser to show data.
@@ -59,6 +72,24 @@ main.py --display 2 --type json
 To display an alternative json serialized file:
 ```
 main.py --display 2 --alt alt_json
+```
+
+### managing serializers
+To manage and create additional serializers, inside the python folder, there are two additional folders:
+
+The supported serializer folder:
+
+* ..\data_serializer\python\serializers
+
+The alternative serializer folder:
+
+* ..\data_serializer\python\alternative_serializers
+
+
+### serializer template
+To create a new serializer module, all other serializer modules are sourcing from this base class serializer folder:
+```
+..\data_serializer\python\serializers\serialize_template.py
 ```
 
 ### unittests
