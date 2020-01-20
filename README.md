@@ -15,6 +15,10 @@ The developer must have these support options in the tool:
 To serialize is to convert from a data object (tuple, list, dict) to a string object (str, unicode) and then storing this information into a file.
 
 
+### Plan
+
+![Plan](/plan.pdf)
+
 ### Prerequisites
 * numpy
 
