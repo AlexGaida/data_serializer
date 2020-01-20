@@ -45,7 +45,7 @@ class SerializeFile(Serializer):
         """
         Serializer.write(self, f_output=f_output, f_data=f_data)
 
-        with open(self.OUTPUT_PATH, 'wb') as yaml_data:
+        with open(self.OUTPUT_PATH, 'w') as yaml_data:
             try:
                 yaml.dump(self.INTERPRETED_INPUT_DATA, yaml_data)
                 yaml_data.close()

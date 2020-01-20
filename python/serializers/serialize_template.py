@@ -195,8 +195,8 @@ class Serializer:
         message = "<html>\n"
         message += "<head>{} Data</head>".format(self.SERIALIZER_TYPE)
         message += "<body>"
-        print type(lines)
-        if isinstance(lines, (str, unicode)):
+
+        if isinstance(lines, str):
             message += "<p>{}</p>".format(lines)
 
         if isinstance(lines, (list, tuple)):
@@ -213,7 +213,7 @@ class Serializer:
                 message += "{}</p>".format(values)
         message += "</html>"
 
-        with open(self.OUTPUT_HTML_PATH, 'wb') as html_write:
+        with open(self.OUTPUT_HTML_PATH, 'w') as html_write:
             html_write.write(message)
             html_write.close()
         return True

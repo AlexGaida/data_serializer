@@ -46,7 +46,7 @@ class SerializeFile(Serializer):
         """
         Serializer.write(self, f_output=f_output, f_data=f_data)
 
-        with open(self.OUTPUT_PATH, 'wb') as pickle_data:
+        with open(self.OUTPUT_PATH, 'w') as pickle_data:
             try:
                 pickle.dump(self.INTERPRETED_INPUT_DATA, pickle_data)
                 pickle_data.close()

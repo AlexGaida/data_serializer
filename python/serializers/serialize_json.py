@@ -48,7 +48,7 @@ class SerializeFile(Serializer):
         """
         Serializer.write(self, f_output=f_output, f_data=f_data)
 
-        with open(self.OUTPUT_PATH, 'wb') as json_data:
+        with open(self.OUTPUT_PATH, 'w') as json_data:
             try:
                 json.dump(self.INTERPRETED_INPUT_DATA, json_data, ensure_ascii=False, indent=4)
                 self.print_file_size()
