@@ -17,7 +17,7 @@ To serialize is to convert from a data object (tuple, list, dict) to a string ob
 
 ### Plan
 
-![Image of Plan](https://github.com/AlexGaida/data_serializer/plan.png)
+![Image of Plan](./plan.png)
 
 ### Prerequisites
 * numpy
