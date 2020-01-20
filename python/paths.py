@@ -24,9 +24,39 @@ INPUT_DATA_FILE = path.join(MODULE_DIR, os.pardir, "personal_data.csv")
 OUTPUT_FILE_STR = "personal_data"
 
 
+def __convert_bytes(num):
+    """
+    this function will convert bytes to MB.... GB... etc
+    """
+    num = num.st_size
+    for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
+        if num < 1024.0:
+            return "%3.1f %s" % (num, x)
+        num /= 1024.0
+
+
+def check_file_size(file_name=""):
+    """
+    checks the file size of the file name supplied.
+    :param file_name: <str> file name.
+    :return: <str> file size.
+    """
+    if check_file(file_name):
+        file_info = os.stat(file_name)
+        return __convert_bytes(file_info)
+    return False
+
+
+def find_output_files():
+    """
+    finds all the output files.
+    :return:
+    """
+
+
 def check_input_data_file():
     """
-    Checks the input data file for discrepancies.
+    checks the input data file for discrepancies.
     :return: <bool> True for acceptable use. <bool> False for cannot use file.
     """
     return check_file(INPUT_DATA_FILE)
@@ -60,7 +90,7 @@ def find_serializers(files=False, names=False, alternative=False):
         for serial in serials:
             if serial in IGNORE_FILES:
                 continue
-            serial = serial.strip('.py')
+            serial = serial.replace('.py', '')
             for accepted_name in SERIALIZER_NAMES:
                 if accepted_name in serial:
                     nice_name = re.sub(accepted_name+'_', '', serial)

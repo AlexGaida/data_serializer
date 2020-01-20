@@ -11,6 +11,7 @@ import webbrowser
 import unittest
 import os
 import subprocess
+import sys
 from sys import platform
 
 # define custom imports
@@ -18,7 +19,9 @@ import paths
 import tests
 
 # define private variables
+__python_version__ = sys.version
 __version__ = "1.0.0"
+__verbose__ = 1
 
 # define global variables
 SERIALIZERS = paths.find_serializers(names=1)
@@ -26,12 +29,17 @@ ALT_SERIALIZERS = paths.find_serializers(alternative=1, names=1)
 OUTPUT_PATH = paths.OUTPUT_PATH
 INPUT_DATA_FILE = paths.INPUT_DATA_FILE
 
+# print the module info
+if __verbose__:
+    print("[Module Version] :: {}".format(__version__))
+    print("[Python Version] :: {}".format(__python_version__))
+
 
 def run_serializer(serializer_type=""):
     """
     runs the chosen serializer.
     :param serializer_type: <str> serializer type.
-    :return: <Class> SerializeFile.
+    :return: <Class> SerializeFile. <bool> False for failure.
     """
     serializer_name = "serialize_" + serializer_type
     print("[Serializer_Name] :: {}".format(serializer_name))
@@ -39,8 +47,13 @@ def run_serializer(serializer_type=""):
         path_name = paths.ALTERNATIVE_SERIALIZER_PATH
     else:
         path_name = paths.SERIALIZER_PATH
-    fp, pathname, description = imp.find_module(serializer_name, [path_name])
-    serializer_module = imp.load_module(serializer_name, fp, pathname, description)
+
+    try:
+        fp, pathname, description = imp.find_module(serializer_name, [path_name])
+        serializer_module = imp.load_module(serializer_name, fp, pathname, description)
+    except ImportError:
+        print("[Module Not Loaded] :: {}".format(serializer_name))
+        return False
 
     # instantiate the chosen serializer file class
     return serializer_module.SerializeFile()
@@ -104,7 +117,8 @@ def run_program(serializer_type="", serializer_alt_type="", serializer_query=0,
         for serializer_name in SERIALIZERS + ALT_SERIALIZERS:
             print(serializer_name)
             cls = run_serializer(serializer_type=serializer_name)
-            cls.write()
+            if cls is not False:
+                cls.write()
 
     if serializer_query:
         print("Running serializer query: ")
@@ -131,12 +145,14 @@ def run_program(serializer_type="", serializer_alt_type="", serializer_query=0,
     elif serializer_type:
         print("Running chosen serializer: " + serializer_type)
         cls = run_serializer(serializer_type=serializer_type)
-        cls.write()
+        if cls is not False:
+            cls.write()
 
     elif serializer_alt_type:
         print("Running chosen alternative serializer: " + serializer_alt_type)
         cls = run_serializer(serializer_type=serializer_alt_type)
-        cls.write()
+        if cls is not False:
+            cls.write()
 
 
 def run_program_loop():
@@ -160,6 +176,7 @@ def run_program_loop():
             run_program(serializer_all=1)
 
         if arguments.cmd == 'type':
+            print(SERIALIZERS)
             user_input = raw_input("Provide serializer type: ")
             if user_input in SERIALIZERS:
                 run_program(serializer_type=user_input)
@@ -167,6 +184,7 @@ def run_program_loop():
                 print("[Invalid Name] :: Acceptable serializers:\n{}".format(SERIALIZERS))
 
         if arguments.cmd == 'alt':
+            print(ALT_SERIALIZERS)
             user_input = raw_input("Provide alternative serializer type: ")
             if user_input in ALT_SERIALIZERS:
                 run_program(serializer_alt_type=user_input)
@@ -258,4 +276,3 @@ if __name__ in "__main__":
                     serializer_display=serializer_display,
                     serializer_test=serializer_test,
                     serializer_all=serializer_all)
-

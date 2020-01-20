@@ -16,6 +16,7 @@ To serialize is to convert from a data object (tuple, list, dict) to a string ob
 
 
 ### Prerequisites
+* numpy
 
 Open a windows or linux command prompt, and drag this file through and run the commands:
 
@@ -30,11 +31,11 @@ There are two ways to operate this tool, the first option is by using the 6 argu
   -h, --help            show this help message and exit
   --all	{0, 1}	     Run all available supported and alternate serializers.
   --run	{0, 1}	     Run the program inside a loop.
-  --type {json,pickle,yaml}
+  --type {json, pickle, yaml, numpy, unicode}
                         This is the serializer data type parameter.
   --display {1,2,3}     When true, display the output serialized file. 1: print on command-line. 2: open webbrower. 3: open notepad.
   --query {0,1}         When true, display all supported serializers.
-  --alt {alt_01_yaml,alt_pickle,alt_yaml,alt_yaml_01}
+  --alt {alt_01_yaml, alt_pickle, alt_yaml, alt_yaml_01}
                         When this is supplied, alternative serializers are
                         used instead.
   --tests {0,1}         Run unittest on all available serializers. This

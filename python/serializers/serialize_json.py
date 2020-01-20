@@ -51,6 +51,7 @@ class SerializeFile(Serializer):
         with open(self.OUTPUT_PATH, 'wb') as json_data:
             try:
                 json.dump(self.INTERPRETED_INPUT_DATA, json_data, ensure_ascii=False, indent=4)
+                self.print_file_size()
                 return True
             except ValueError:
                 return False

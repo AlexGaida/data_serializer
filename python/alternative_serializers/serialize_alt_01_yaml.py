@@ -49,7 +49,7 @@ class SerializeFile(Serializer):
             try:
                 yaml.dump(self.INTERPRETED_INPUT_DATA, yaml_data)
                 yaml_data.close()
-                Serializer.write_html(self)
+                self.print_file_size()
                 return True
             except ValueError:
                 return False

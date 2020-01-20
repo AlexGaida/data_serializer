@@ -56,4 +56,5 @@ class SerializeFile(Serializer):
         with open(self.OUTPUT_PATH, 'w') as yaml_data:
             yaml.dump(self.INTERPRETED_INPUT_DATA, yaml_data)
             yaml_data.close()
+        self.print_file_size()
         return True

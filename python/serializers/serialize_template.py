@@ -34,6 +34,16 @@ class Serializer:
         self.OUTPUT_PATH = paths.join([OUTPUT_FILE_PATH, OUTPUT_FILE_STR + '.' + self.SERIALIZER_TYPE])
         self.OUTPUT_HTML_PATH = paths.join([OUTPUT_FILE_PATH, OUTPUT_FILE_STR + '_' + self.SERIALIZER_TYPE + '.html'])
 
+    def print_file_size(self):
+        """
+        prints the file size of the written output file.
+        :return: <bool> True for success. <bool> False for failure.
+        """
+        f_size = paths.check_file_size(self.OUTPUT_PATH)
+        if not f_size:
+            return False
+        print("[File Size] :: {}".format(f_size))
+
     def get_data(self):
         """
         get the data.
@@ -74,7 +84,8 @@ class Serializer:
         if data:
             self.READ_DATA = data
         if self.READ_DATA:
-            return pprint.pformat(self.READ_DATA, indent=4, depth=1)
+            self.READ_DATA = pprint.pformat(self.READ_DATA, indent=4, depth=1)
+            return True
         return False
 
     def deserialize_data(self, str_data=""):
@@ -179,10 +190,12 @@ class Serializer:
         :return: <bool> True for success. <bool> False for failure.
         """
         lines = self.deserialize_data(self.READ_DATA)
+        if not lines:
+            raise ValueError("[{}] is not a valid data format.".format(lines))
         message = "<html>\n"
         message += "<head>{} Data</head>".format(self.SERIALIZER_TYPE)
         message += "<body>"
-
+        print type(lines)
         if isinstance(lines, (str, unicode)):
             message += "<p>{}</p>".format(lines)
 

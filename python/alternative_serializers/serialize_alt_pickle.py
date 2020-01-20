@@ -50,6 +50,7 @@ class SerializeFile(Serializer):
             try:
                 pickle.dump(self.INTERPRETED_INPUT_DATA, pickle_data)
                 pickle_data.close()
+                self.print_file_size()
                 return True
             except ValueError:
                 return False
